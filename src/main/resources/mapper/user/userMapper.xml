@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tech.ouyu.quickResponder.back.mapper.UserMapper">
+    <resultMap id="userInfoMap" type="user">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="phone" column="phone"/>
+        <result property="integral" column="integral"/>
+        <result property="studentNumber" column="student_number"/>
+        <result property="openId" column="openId"/>
+        <association property="storage" column="id" javaType="storage">
+            <id property="id" column="id"/>
+            <result property="accessUrl" column="access_url"/>
+            <result property="type" column="type"/>
+        </association>
+        <association property="classGrade" column="id" javaType="classGrade">
+            <id property="id" column="id"/>
+            <result property="classGradeName" column="class_grade_name"/>
+        </association>
+        <association property="role" column="roleCode" javaType="role">
+            <id property="id" column="id"/>
+            <result property="roleCode" column="role_code"/>
+            <result property="roleName" column="role_name"/>
+        </association>
+    </resultMap>
+
+
+    <select id="findByUsername" resultType="user" parameterType="user">
+        select *
+        from user
+        where username = #{username}
+    </select>
+
+    <select id="findUserInfo" resultMap="userInfoMap">
+        select *
+        from user
+                 left join storage on user.head_picture = storage.id
+                 left join role on user.role_code = role.role_code
+                 left join user_classgrade on user.id = user_classgrade.user_id
+                 left join class_grade on user_classgrade.class_grade_id = class_grade.id
+        where user.id = #{userId}
+    </select>
+
+    <resultMap id="userCourses" type="tech.ouyu.quickResponder.back.dao.UserSourse">
+        <id column="id" property="id"/>
+        <collection property="classGrade" ofType="classGrade">
+            <id column="clg_id" property="id"/>
+            <result property="classGradeName" column="class_grade_name"/>
+        </collection>
+        <collection property="subject" ofType="subject">
+            <id column="subject_id" property="id"/>
+            <result property="subject" column="_subject"/>
+            <result property="overdueTime" column="overdue_time"/>
+            <result property="week" column="week"/>
+            <result property="schoolTime" column="school_time"/>
+        </collection>
+    </resultMap>
+
+    <sql id="findCourses">
+        select user_classgrade.id as id,
+               class_grade.id     as clg_id,
+               class_grade_name,
+               subject.id         as subject_id,
+               subject.subject    as _subject,
+               overdue_time
+        from user
+                 join user_classgrade on user.id = user_classgrade.user_id
+                 join class_grade on user_classgrade.class_grade_id = class_grade.id
+                 join subject on class_grade.id = subject.grade_id
+                 join user_subject on subject.id = user_subject.subject_id
+        where user.id = #{userId}
+          and user_subject.user_id = #{userId}
+          and subject.overdue_time > now()
+    </sql>
+    <!--五表关联查询 必须用上两个条件来限制-->
+    <select id="findByCourses" resultMap="userCourses">
+        <include refid="findCourses"/>
+    </select>
+
+    <sql id="findCoursesSchoolTime">
+        select user_classgrade.id as id,
+               class_grade.id     as clg_id,
+               class_grade_name,
+               subject.id         as subject_id,
+               subject.subject    as _subject,
+               overdue_time,
+               school_time,
+               week
+        from user
+                 join user_classgrade on user.id = user_classgrade.user_id
+                 join class_grade on user_classgrade.class_grade_id = class_grade.id
+                 join subject on class_grade.id = subject.grade_id
+                 join user_subject on subject.id = user_subject.subject_id
+                 join subject_school_time on subject_school_time.subject_id = subject.id
+        where user.id = #{userId}
+          and user_subject.user_id = #{userId}
+          and subject.overdue_time > now()
+          and subject_school_time.week = #{week}
+    </sql>
+    <select id="findByCourseSchoolTime" resultMap="userCourses">
+        <include refid="findCoursesSchoolTime"/>
+    </select>
+
+    <!--<select id="findByTeacherCourses" resultMap="userCourses">
+        select user_classgrade.id as id,
+               class_grade.id     as clg_id,
+               class_grade_name,
+               subject.id         as subject_id,
+               subject.subject    as _subject,
+               overdue_time
+        from user
+                 join user_classgrade on user.id = user_classgrade.user_id
+                 join class_grade on user_classgrade.class_grade_id = class_grade.id
+                 join subject on class_grade.id = subject.grade_id
+        where user.id = #{userId}
+          and `subject`.grade_id = #{classGradeId}
+          and subject.overdue_time > now()
+    </select>
+    <select id="findByTeacherCourseSchoolTime" resultMap="userCourses">
+        select user_classgrade.id as id,
+               class_grade.id     as clg_id,
+               class_grade_name,
+               subject.id         as subject_id,
+               subject.subject    as _subject,
+               overdue_time,
+               school_time,
+               week
+        from user
+                 join user_classgrade on user.id = user_classgrade.user_id
+                 join class_grade on user_classgrade.class_grade_id = class_grade.id
+                 join subject on class_grade.id = subject.grade_id
+                 join subject_school_time on subject_school_time.subject_id = subject.id
+        where user.id = #{userId}
+          and subject.overdue_time > now()
+          and subject_school_time.week = #{week}
+          and `subject`.grade_id = #{classGradeId}
+    </select>-->
+    <!--下面两个相比上面两个少关联了一张表性能更强-->
+    <select id="findByTeacherCourses" resultMap="userCourses">
+        SELECT user_classgrade.id AS id,
+               class_grade.id     AS clg_id,
+               class_grade_name,
+               subject.id         AS subject_id,
+               subject.subject    AS _subject,
+               overdue_time
+        FROM user_classgrade
+                 JOIN class_grade
+                      ON user_classgrade.class_grade_id = class_grade.id
+                 JOIN `subject`
+                      ON class_grade.id = `subject`.grade_id
+        WHERE user_classgrade.user_id = #{userId}
+          and user_classgrade.class_grade_id = #{classGradeId}
+          and subject.overdue_time > now()
+          and subject.create_by = #{userId}
+    </select>
+
+    <select id="findByTeacherCourseSchoolTime" resultMap="userCourses">
+        SELECT user_classgrade.id AS id,
+               class_grade.id     AS clg_id,
+               class_grade_name,
+               subject.id         AS subject_id,
+               subject.subject    AS _subject,
+               overdue_time,
+               school_time,
+               week
+        FROM user_classgrade
+                 JOIN class_grade
+                      ON user_classgrade.class_grade_id = class_grade.id
+                 JOIN `subject`
+                      ON class_grade.id = `subject`.grade_id
+                 join subject_school_time on subject_school_time.subject_id = subject.id
+        WHERE user_classgrade.user_id = #{userId}
+          and user_classgrade.class_grade_id = #{classGradeId}
+          and subject.overdue_time > now()
+          and subject.create_by = #{userId}
+          and subject_school_time.week = #{week}
+    </select>
+
+    <!--获取本班级全部的课程-->
+    <select id="findClassGradeAllCourse" resultMap="userCourses">
+        SELECT class_grade.id as id,
+               class_grade.id  AS clg_id,
+               class_grade_name,
+               subject.id      AS subject_id,
+               subject.subject AS _subject,
+               overdue_time
+        FROM class_grade
+                 JOIN `subject`
+                      ON class_grade.id = `subject`.grade_id
+        WHERE class_grade.id = #{classGradeId}
+          and subject.overdue_time > now();
+    </select>
+
+    <select id="findClassGradeAllCourseSchoolTime" resultMap="userCourses">
+        SELECT class_grade.id as id,
+               class_grade.id  AS clg_id,
+               class_grade_name,
+               subject.id      AS subject_id,
+               subject.subject AS _subject,
+               overdue_time,
+               school_time,
+               week
+        FROM class_grade
+                 JOIN `subject`
+                      ON class_grade.id = `subject`.grade_id
+                 join subject_school_time on subject_school_time.subject_id = subject.id
+        WHERE class_grade.id = #{classGradeId}
+          and subject.overdue_time > now()
+          and subject_school_time.week = #{week}
+    </select>
+</mapper>

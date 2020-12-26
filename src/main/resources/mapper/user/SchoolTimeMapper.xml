@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tech.ouyu.quickResponder.back.mapper.SchoolTimeMapper">
+    <select id="findByFreeTime" resultType="SubjectSchoolTime">
+        SELECT
+            week,
+            school_time
+        FROM
+            `subject`
+                JOIN subject_school_time
+                     ON `subject`.id = subject_school_time.subject_id
+        WHERE `subject`.grade_id = #{classGradeId}
+    </select>
+</mapper>

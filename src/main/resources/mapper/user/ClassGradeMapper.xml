@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tech.ouyu.quickResponder.back.mapper.ClassGradeMapper">
+    <select id="findClassGradeByUserId" resultType="classGrade">
+        SELECT class_grade.id as id,
+               class_grade_name
+        FROM user
+                 JOIN user_classgrade ON user.id = user_classgrade.user_id
+                 JOIN class_grade ON user_classgrade.class_grade_id = class_grade.id
+        WHERE user.id = #{userId}
+    </select>
+</mapper>

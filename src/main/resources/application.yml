@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: quick-responder
+  devtools:
+    restart:
+      enabled: true
+server:
+  port: 1354 #这是当时写端口号时的时间
+mybatis-plus:
+#  config-location: classpath:/config/mybatis-config.xml
+  type-aliases-package: tech.ouyu.quickResponder.back.entity
+  mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+CrossOrigin:
+  origins: http://localhost:8080,http://localhost:1354
+  exposedHeaders: X-CURRENT-TOKEN,Content-Type
+  allowCredentials: 'true'
+  allowedHeaders: X-CURRENT-TOKEN,Content-Type
+  methods: GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS,TRACE
+  maxAge: '1800'
