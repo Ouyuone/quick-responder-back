@@ -3,13 +3,12 @@ package tech.ouyu.quickResponder.back.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import tech.ouyu.quickResponder.back.service.SubjectSchoolTimeService;
 import tech.ouyu.quickResponder.back.service.UserSubjectService;
 import tech.ouyu.quickResponder.back.vo.AuthBean;
 import tech.ouyu.quickResponder.back.vo.Result;
+import tech.ouyu.quickResponder.back.vo.TeacherCouser;
 
 /**
  * <pre>
@@ -30,9 +29,17 @@ import tech.ouyu.quickResponder.back.vo.Result;
 public class CourseController {
 
     final UserSubjectService userSubjectService;
-    @ApiOperation("添加课程 ")
+    final SubjectSchoolTimeService subjectSchoolTimeService;
+
+    @ApiOperation("同学添加课程 ")
     @PostMapping("/addCourse")
-    public Result addCourse(@RequestAttribute Long userId, Long courseId){
-        return new Result<AuthBean>().success(userSubjectService.addCourse(userId,courseId));
+    public Result addCourse(@RequestAttribute Long userId, Long courseId) {
+        return new Result<AuthBean>().success(userSubjectService.addCourse(userId, courseId));
+    }
+
+    @ApiOperation("老师添加课程")
+    @PostMapping("/teacherAddCourse")
+    public Result teacherAddCourse(@RequestBody TeacherCouser teacherCouser) {
+        return new Result<Boolean>().success(subjectSchoolTimeService.teacherAddCourse(teacherCouser));
     }
 }

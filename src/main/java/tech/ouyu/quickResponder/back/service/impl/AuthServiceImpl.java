@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import tech.ouyu.quickResponder.back.constant.DescribeConstant;
 import tech.ouyu.quickResponder.back.dao.UserSourse;
 import tech.ouyu.quickResponder.back.entity.*;
@@ -17,7 +18,10 @@ import tech.ouyu.quickResponder.back.service.ClassGradeService;
 import tech.ouyu.quickResponder.back.service.SchoolTimeService;
 import tech.ouyu.quickResponder.back.service.UserService;
 import tech.ouyu.quickResponder.back.vo.AuthBean;
+import tech.ouyu.quickResponder.back.vo.AuthTopic;
+import tech.ouyu.quickResponder.back.vo.UserBean;
 
+import java.sql.DriverManager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +124,10 @@ public class AuthServiceImpl extends ServiceImpl<AuthMapper, AuthAccess> impleme
             //加入本星期几有课的学科
             subjectList.addAll(schoolTime.getSubject());
         }
+        //当添加课程已经没有课程可以添加subjectList中没有课程了就直接返回
+        if(CollectionUtils.isEmpty(subjectList)){
+            return authBean;
+        }
         //把有课的学科排在前面根据上课时间升序排序
         subjectList.sort(Subject::compareTo);
         courses.setSubject(subjectList);
@@ -212,5 +220,11 @@ public class AuthServiceImpl extends ServiceImpl<AuthMapper, AuthAccess> impleme
         userSourseMap.put("userSourse", userSourse);
         userSourseMap.put("schoolTime", schoolTime);
         return userSourseMap;
+    }
+
+    @Override
+    public AuthTopic liveTopic(Long userId, String accseeUrl) {
+
+        return null;
     }
 }

@@ -1,7 +1,9 @@
 package tech.ouyu.quickResponder.back.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -54,4 +56,7 @@ public class UserInfo {
 
     @ApiModelProperty("角色名")
     private String roleName;
+
+    @ApiModelProperty("是否是新用户")
+    private Boolean isNew=false;
 }

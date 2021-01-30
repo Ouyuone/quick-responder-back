@@ -3,6 +3,7 @@ package tech.ouyu.quickResponder.back.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import tech.ouyu.quickResponder.back.entity.ClassGrade;
+import tech.ouyu.quickResponder.back.vo.ClassGradeVo;
 
 import java.util.List;
 
@@ -22,4 +23,8 @@ import java.util.List;
 public interface ClassGradeMapper extends BaseMapper<ClassGrade> {
 
     List<ClassGrade> findClassGradeByUserId(Long userId);
+
+    List<ClassGradeVo> getMyGrade(Long userId);
+
+    List<ClassGrade> findNotHaveClassGrades(Long userId);
 }

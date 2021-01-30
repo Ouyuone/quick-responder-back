@@ -1,5 +1,6 @@
 package tech.ouyu.quickResponder.back.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.BindingResult;
@@ -72,6 +73,12 @@ public class UserController {
     @ApiImplicitParam(name = DescribeConstant.Header.X_CURRENT_TOKEN, value = "token令牌", required = false, dataType = "String",paramType="header")
     public Result UserInfoByOpenIdOrRegister(@RequestBody UserInfo userInfo){
             return new Result<MpUserInfo>().success(userService.UserInfoByOpenIdOrRegister(userInfo));
+    }
+
+    @ApiOperation("微信小程序登录的添加角色")
+    @PostMapping("/addUserRole")
+    public Result addUserRole(@RequestAttribute Long userId,String roleCode){
+        return new Result<Boolean>().success(userService.addUserRole(userId,roleCode));
     }
 
 }

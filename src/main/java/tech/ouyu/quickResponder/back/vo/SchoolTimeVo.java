@@ -80,11 +80,4 @@ public class SchoolTimeVo implements Comparable<SchoolTimeVo>{
         }
     }
 }
-@Data
-@AllArgsConstructor
-class Time{
-    private String realSeveralLesson;
-    private String severalLesson;
-    private boolean isChecked;
-    private int userId;
-}
+

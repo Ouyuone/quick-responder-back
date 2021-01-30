@@ -52,4 +52,6 @@ public interface UserService extends IService<User>{
     UserSourse findClassGradeAllCourse(Long i);
 
     UserSourse findClassGradeAllCourseSchoolTime(Long classGradeId);
+
+    Boolean addUserRole(Long userId, String roleCode);
 }

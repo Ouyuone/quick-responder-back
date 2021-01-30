@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import tech.ouyu.quickResponder.back.service.AuthService;
 import tech.ouyu.quickResponder.back.vo.AuthBean;
+import tech.ouyu.quickResponder.back.vo.AuthTopic;
 import tech.ouyu.quickResponder.back.vo.Result;
 
 /**
@@ -31,6 +32,12 @@ public class AuthController {
     @GetMapping("/course")
     public Result<AuthBean> course(@RequestAttribute Long userId,String accessUrl,@RequestParam(required = false) Long classGradeId){
         return new Result<AuthBean>().success(authService.course(userId,accessUrl,classGradeId));
+    }
+
+    @ApiOperation(value = "获取题库")
+    @GetMapping("/liveTopic")
+    public Result liveTopic(@RequestAttribute Long userId, String accseeUrl){
+        return new Result<AuthTopic>().success(authService.liveTopic(userId,accseeUrl));
     }
 
 }

@@ -11,4 +11,21 @@
                  JOIN class_grade ON user_classgrade.class_grade_id = class_grade.id
         WHERE user.id = #{userId}
     </select>
+
+    <select id="getMyGrade" resultType="tech.ouyu.quickResponder.back.vo.ClassGradeVo">
+        select class_grade.id   as classGradeId,
+               class_grade_name as classGradeName
+        from class_grade
+                 join user_classgrade on class_grade.id = user_classgrade.class_grade_id
+        where user_classgrade.user_id = #{userId}
+    </select>
+
+    <select id="findNotHaveClassGrades" resultType="classGrade">
+        select *
+        from class_grade
+        where class_grade.id
+                  not in
+              (select user_classgrade.class_grade_id from user_classgrade where user_classgrade.user_id = #{userId})
+
+    </select>
 </mapper>

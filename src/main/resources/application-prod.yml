@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: mpw:LYzFyk285IaW29YoIHQB2JFDU4Pd48ihlvtc2tqHZGJRq+vhFuW/BEX8jI0PnCCYJihomaNBSLMD9rKtJ/T2awlS8GJw/MVY3l5fIs9z8vffHyDF3qm1rViGBLRhsswG
+    url: mpw:LYzFyk285IaW29YoIHQB2JFDU4Pd48ihlvtc2tqHZGJRq+vhFuW/BEX8jI0PnCCYJihomaNBSLMD9rKtJ/T2awlS8GJw/MVY3l5fIs9z8veqJY1/zk+bZkjFDCsv+2WNWq8LyY3J9UP+VlTgnZrcDw==
     username: mpw:tWidkv0AsJ/EIKbbRHpnIA==
     password: mpw:tWidkv0AsJ/EIKbbRHpnIA==
     type: com.alibaba.druid.pool.DruidDataSource

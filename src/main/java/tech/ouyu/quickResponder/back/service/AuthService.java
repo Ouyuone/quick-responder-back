@@ -3,6 +3,7 @@ package tech.ouyu.quickResponder.back.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import tech.ouyu.quickResponder.back.entity.AuthAccess;
 import tech.ouyu.quickResponder.back.vo.AuthBean;
+import tech.ouyu.quickResponder.back.vo.AuthTopic;
 
 /**
  * <pre>
@@ -18,4 +19,6 @@ import tech.ouyu.quickResponder.back.vo.AuthBean;
  */
 public interface AuthService extends IService<AuthAccess> {
     AuthBean course(Long userId,String accessUrl,Long classGradeId);
+
+    AuthTopic liveTopic(Long userId, String accseeUrl);
 }

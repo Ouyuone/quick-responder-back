@@ -3,6 +3,7 @@ package tech.ouyu.quickResponder.back.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.AES;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.code.kaptcha.Constants;
 import lombok.AllArgsConstructor;
@@ -194,14 +195,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new MessageException("小程序授权登录失败，为获取到openId");
         }
         User one = getOne(new LambdaQueryWrapper<User>().eq(User::getOpenId, userInfo.getOpenId()));
+        boolean isNew=false;
         if(one == null){
             //注册
            one = doMpweixinRegister(userInfo);
-
+            isNew=true;
         }
         //找出对应的用户信息返给页面
         userInfo = userInfo(one.getId());
-
+        userInfo.setIsNew(isNew);
         //生成token
         String token = jwtUtil.generateToken(new UserClaim(new User()
                 .setId(userInfo.getUserId())
@@ -291,5 +293,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         UserSourse schoolTime = getBaseMapper().findClassGradeAllCourseSchoolTime(week - 1, classGradeId);
         log.info("本班级所有课程j今天的上课信息:{}",schoolTime);
         return schoolTime;
+    }
+
+    @Override
+    public Boolean addUserRole(Long userId, String roleCode) {
+        User one = getOne(Wrappers.lambdaQuery(User.class).eq(User::getId, userId));
+        one.setRoleCode(roleCode);
+        updateById(one);
+        return true;
     }
 }
